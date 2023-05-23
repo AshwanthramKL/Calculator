@@ -1,12 +1,69 @@
-import React from "react";
+import React, { useReducer } from "react";
 import "./styles.css";
 
+// interfaces
+interface payloadData {
+  digit: number;
+}
+
+interface ActionData {
+  type: string;
+  payload: payloadData;
+}
+interface OperandState {
+  currentOperand: string;
+  previousOperand: string;
+  operation: string;
+}
+
+// Constants
+
+const ACTIONS = {
+  ADD_DIGIT: "add-digit",
+  CLEAR: "clear",
+  CHOOSE_OPERATION: "choose-operation",
+  DELETE_DIGIT: "delte-digit",
+  EVALUATE: "evaluate",
+};
+
+const initialState: OperandState = {
+  currentOperand: "",
+  previousOperand: "",
+  operation: "",
+};
+
+// reducer function
+function reducer(
+  state: OperandState,
+  { type, payload }: ActionData
+): OperandState {
+  switch (type) {
+    case ACTIONS.ADD_DIGIT:
+      return {
+        ...state,
+        currentOperand: `${state.currentOperand || ""}${payload.digit} `,
+      };
+
+    default:
+      return state;
+  }
+}
+
 function App() {
+  const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
+
+  dispatch({ type: ACTIONS.ADD_DIGIT, payload: { digit: 1 } });
+
   return (
     <div className="calculator-grid">
       <div className="output">
-        <div className="previous-operand">1232 +</div>
-        <div className="current-operand">89219821</div>
+        <div className="previous-operand">
+          {previousOperand} {operation}
+        </div>
+        <div className="current-operand">{currentOperand}</div>
       </div>
       <button className="span-two">AC</button>
       <button>DEL</button>
