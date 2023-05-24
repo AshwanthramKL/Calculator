@@ -1,9 +1,12 @@
 import React, { useReducer } from "react";
+import DigitButton from "./DigitButton";
+import OperationButton from "./OperationButton";
 import "./styles.css";
 
 // interfaces
 interface payloadData {
-  digit: number;
+  operation: string;
+  digit: string;
 }
 
 interface ActionData {
@@ -18,7 +21,7 @@ interface OperandState {
 
 // Constants
 
-const ACTIONS = {
+export const ACTIONS = {
   ADD_DIGIT: "add-digit",
   CLEAR: "clear",
   CHOOSE_OPERATION: "choose-operation",
@@ -39,10 +42,16 @@ function reducer(
 ): OperandState {
   switch (type) {
     case ACTIONS.ADD_DIGIT:
+      if (payload.digit === "0" && state.currentOperand === "0") return state;
+      if (payload.digit === "." && state.currentOperand.includes("."))
+        return state;
       return {
         ...state,
-        currentOperand: `${state.currentOperand || ""}${payload.digit} `,
+        currentOperand: `${state.currentOperand || ""}${payload.digit}`,
       };
+
+    case ACTIONS.CLEAR:
+      return initialState;
 
     default:
       return state;
@@ -55,8 +64,6 @@ function App() {
     initialState
   );
 
-  dispatch({ type: ACTIONS.ADD_DIGIT, payload: { digit: 1 } });
-
   return (
     <div className="calculator-grid">
       <div className="output">
@@ -65,23 +72,33 @@ function App() {
         </div>
         <div className="current-operand">{currentOperand}</div>
       </div>
-      <button className="span-two">AC</button>
+      <button
+        className="span-two"
+        onClick={() => {
+          dispatch({
+            type: ACTIONS.CLEAR,
+            payload: { operation: "", digit: "" },
+          });
+        }}
+      >
+        AC
+      </button>
       <button>DEL</button>
-      <button>÷</button>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>*</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>+</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button>-</button>
-      <button>.</button>
-      <button>0</button>
+      <OperationButton dispatch={dispatch} operation="÷" />
+      <DigitButton dispatch={dispatch} digit="1" />
+      <DigitButton dispatch={dispatch} digit="2" />
+      <DigitButton dispatch={dispatch} digit="3" />
+      <OperationButton dispatch={dispatch} operation="*" />
+      <DigitButton dispatch={dispatch} digit="4" />
+      <DigitButton dispatch={dispatch} digit="5" />
+      <DigitButton dispatch={dispatch} digit="6" />
+      <OperationButton dispatch={dispatch} operation="+" />
+      <DigitButton dispatch={dispatch} digit="7" />
+      <DigitButton dispatch={dispatch} digit="8" />
+      <DigitButton dispatch={dispatch} digit="9" />
+      <OperationButton dispatch={dispatch} operation="-" />
+      <DigitButton dispatch={dispatch} digit="." />
+      <DigitButton dispatch={dispatch} digit="0" />
       <button className="span-two">=</button>
     </div>
   );
