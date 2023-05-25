@@ -2,6 +2,7 @@ import React, { useReducer } from "react";
 import DigitButton from "./DigitButton";
 import OperationButton from "./OperationButton";
 import "./styles.css";
+import { stat } from "fs";
 
 // interfaces
 interface payloadData {
@@ -14,8 +15,8 @@ interface ActionData {
   payload: payloadData;
 }
 interface OperandState {
-  currentOperand: string;
-  previousOperand: string;
+  currentOperand: string | null;
+  previousOperand: string | null;
   operation: string;
 }
 
@@ -41,17 +42,36 @@ function reducer(
   { type, payload }: ActionData
 ): OperandState {
   switch (type) {
-    case ACTIONS.ADD_DIGIT:
+    case ACTIONS.ADD_DIGIT: {
       if (payload.digit === "0" && state.currentOperand === "0") return state;
-      if (payload.digit === "." && state.currentOperand.includes("."))
+      if (payload.digit === "." && state.currentOperand?.includes("."))
         return state;
       return {
         ...state,
         currentOperand: `${state.currentOperand || ""}${payload.digit}`,
       };
+    }
 
-    case ACTIONS.CLEAR:
+    case ACTIONS.CHOOSE_OPERATION:
+      if (state.currentOperand === null && state.previousOperand === null)
+        return state;
+
+      if (state.previousOperand == null)
+        return {
+          ...state,
+          operation: payload.operation,
+          previousOperand: state.currentOperand,
+          currentOperand: null,
+        };
+      return {
+        ...state,
+        previousOperand: evalute(state),
+        operation: payload.operation,
+        currentOperand: null,
+      };
+    case ACTIONS.CLEAR: {
       return initialState;
+    }
 
     default:
       return state;
