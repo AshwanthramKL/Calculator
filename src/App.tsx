@@ -65,7 +65,7 @@ function reducer(
         };
       return {
         ...state,
-        previousOperand: evalute(state),
+        previousOperand: evaluate(state),
         operation: payload.operation,
         currentOperand: null,
       };
@@ -76,6 +76,17 @@ function reducer(
     default:
       return state;
   }
+}
+
+function evaluate( {currentOperand, previousOperand, operation} : OperandState) {
+  let prev: number = previousOperand ? parseFloat(previousOperand) : 0;
+  let current: number = currentOperand ? parseFloat(currentOperand): 0;
+
+  if(isNaN(prev) || isNaN(current)){
+    return ""
+  }
+
+  let computation = 
 }
 
 function App() {
