@@ -40,7 +40,8 @@ body {
   display: flex;
   color: white;
   flex-direction: column;
-  word-wrap: break-word;
+  /* display: inline-block; */
+  word-break: break-word;
   padding: 0.75rem;
   align-items: flex-end;
   justify-content: space-around;

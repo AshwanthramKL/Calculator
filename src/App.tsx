@@ -158,6 +158,19 @@ function evaluate({
   return computation;
 }
 
+const INTEGER_FORMATTER = new Intl.NumberFormat("en-us", {
+  maximumFractionDigits: 0,
+});
+
+function formatOperand(operand: string | null) {
+  if (operand === null) return;
+  const [integer, decimal] = operand?.split(".");
+  console.log(integer, decimal);
+
+  if (decimal === null || decimal === undefined) return `${INTEGER_FORMATTER.format(Number(integer))}`;
+  return `${INTEGER_FORMATTER.format(Number(integer))}.${decimal}`;
+}
+
 function App() {
   const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(
     reducer,
@@ -168,9 +181,10 @@ function App() {
     <div className="calculator-grid">
       <div className="output">
         <div className="previous-operand">
-          {previousOperand} {operation}
+          {formatOperand(previousOperand)}
+          {operation}
         </div>
-        <div className="current-operand">{currentOperand}</div>
+        <div className="current-operand">{formatOperand(currentOperand)}</div>
       </div>
       <button
         className="span-two"
