@@ -87,6 +87,22 @@ function reducer(
       return initialState;
     }
 
+    case ACTIONS.DELETE_DIGIT: {
+      if (state.overwrite) {
+        return {
+          ...state,
+          overwrite: false,
+          currentOperand: null,
+        };
+      }
+      if (state.currentOperand === null) return state;
+      if (state.currentOperand?.length === 1)
+        return { ...state, currentOperand: null };
+      return {
+        ...state,
+        currentOperand: state.currentOperand?.slice(0, -1),
+      };
+    }
     case ACTIONS.EVALUATE: {
       if (
         state.currentOperand === null ||
@@ -167,7 +183,16 @@ function App() {
       >
         AC
       </button>
-      <button>DEL</button>
+      <button
+        onClick={() => {
+          dispatch({
+            type: ACTIONS.DELETE_DIGIT,
+            payload: { operation: "", digit: "" },
+          });
+        }}
+      >
+        DEL
+      </button>
       <OperationButton dispatch={dispatch} operation="÷" />
       <DigitButton dispatch={dispatch} digit="1" />
       <DigitButton dispatch={dispatch} digit="2" />
