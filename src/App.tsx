@@ -2,7 +2,6 @@ import React, { useReducer } from "react";
 import DigitButton from "./DigitButton";
 import OperationButton from "./OperationButton";
 import "./styles.css";
-import { stat } from "fs";
 
 // interfaces
 interface payloadData {
@@ -56,7 +55,13 @@ function reducer(
       if (state.currentOperand === null && state.previousOperand === null)
         return state;
 
-      if (state.previousOperand == null)
+      if (state.currentOperand === null) {
+        return {
+          ...state,
+          operation: payload.operation,
+        };
+      }
+      if (state.previousOperand === null || state.previousOperand === "")
         return {
           ...state,
           operation: payload.operation,
@@ -78,15 +83,37 @@ function reducer(
   }
 }
 
-function evaluate( {currentOperand, previousOperand, operation} : OperandState) {
+function evaluate({
+  currentOperand,
+  previousOperand,
+  operation,
+}: OperandState) {
   let prev: number = previousOperand ? parseFloat(previousOperand) : 0;
-  let current: number = currentOperand ? parseFloat(currentOperand): 0;
+  let current: number = currentOperand ? parseFloat(currentOperand) : 0;
 
-  if(isNaN(prev) || isNaN(current)){
-    return ""
+  if (isNaN(prev) || isNaN(current)) {
+    return "";
   }
 
-  let computation = 
+  let computation = "";
+  switch (operation) {
+    case "+":
+      computation = `${prev + current}`;
+      break;
+
+    case "-":
+      computation = `${prev - current}`;
+      break;
+
+    case "*":
+      computation = `${prev * current}`;
+      break;
+
+    case "÷":
+      computation = `${prev / current}`;
+      break;
+  }
+  return computation;
 }
 
 function App() {
